@@ -1,0 +1,27 @@
+{
+  "name": "group-finder-server",
+  "version": "1.0.0",
+  "description": "Server API's for Group Finder Application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --env-file=.env src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ManjeetSingh-02/group-finder-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/ManjeetSingh-02/group-finder-server/issues"
+  },
+  "homepage": "https://github.com/ManjeetSingh-02/group-finder-server#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "zod": "^4.1.13"
+  }
+}
