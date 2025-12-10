@@ -1,7 +1,7 @@
 {
-  "name": "group-finder-server",
+  "name": "chaihub-server",
   "version": "1.0.0",
-  "description": "Server API's for Group Finder Application",
+  "description": "Server API's for ChaiHub Application",
   "main": "index.js",
   "scripts": {
     "start": "node --env-file=.env src/index.js",
