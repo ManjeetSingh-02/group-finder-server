@@ -22,15 +22,17 @@ export const validateEnv = () => {
   // get parsed result of environment variables
   const result = envSchema.safeParse(envConfig);
 
-  // if validation fails, throw an error with details
-  if (!result.success) {
+  // return new Promise
+  return new Promise((resolve, reject) => {
+    // if validation succeeds, resolves with a success message
+    if (result.success) resolve(console.log('Env variables validation: ✅'));
+
+    // prepare validation error messages
     const errorMessages = result.error.issues
       .map(issue => `${issue.path.join('.')}: ${issue.message}`)
       .join('\n');
 
-    Promise.reject(`Env variables validation: ❌\n${errorMessages}`);
-  }
-
-  // if validation succeeds, return new Promise that resolves with a success message
-  return new Promise(resolve => resolve(console.log('Env variables validation: ✅')));
+    // if validation fails, rejects with error messages
+    reject(`Env variables validation: ❌\n${errorMessages}`);
+  });
 };
