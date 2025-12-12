@@ -1,6 +1,6 @@
 // import local modules
 import { envConfig } from './utils/env.js';
-import { healthCheckRouter, cohortRouter } from './api/routers.api.js';
+import { healthCheckRouter, cohortRouter, authRouter } from './api/routers.api.js';
 
 // import external modules
 import express from 'express';
@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser';
 const app = express();
 
 // middleware for usage of cookies
-app.use(cookieParser());
+app.use(cookieParser(envConfig.COOKIE_SECRET));
 
 // middleware for CORS configuration
 app.use(
@@ -36,6 +36,7 @@ app.use(express.static('public'));
 // middlewares for handling API routes
 app.use('/api/v1/healthcheck', healthCheckRouter);
 app.use('/api/v1/cohort', cohortRouter);
+app.use('/api/v1/auth', authRouter);
 
 // export app
 export default app;
