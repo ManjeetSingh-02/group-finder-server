@@ -7,6 +7,10 @@ export const envConfig = {
   PORT: Number(process.env.PORT),
   MONGODB_URI: String(process.env.MONGODB_URI),
   NODE_ENV: String(process.env.NODE_ENV),
+  COOKIE_SECRET: String(process.env.COOKIE_SECRET),
+  GOOGLE_CLIENT_ID: String(process.env.GOOGLE_CLIENT_ID),
+  GOOGLE_CLIENT_SECRET: String(process.env.GOOGLE_CLIENT_SECRET),
+  GOOGLE_REDIRECT_URI: String(process.env.GOOGLE_REDIRECT_URI),
 };
 
 // zod schema for environment variables
@@ -15,6 +19,10 @@ export const envSchema = z.object({
   PORT: z.number().int().positive(),
   MONGODB_URI: z.url({ message: 'MONGO_URI must be a valid MongoDB URI' }),
   NODE_ENV: z.enum(['development', 'testing', 'production']),
+  COOKIE_SECRET: z.string().min(32, { message: 'COOKIE_SECRET must be at least 32 characters' }),
+  GOOGLE_CLIENT_ID: z.string().nonempty({ message: 'GOOGLE_CLIENT_ID is required' }),
+  GOOGLE_CLIENT_SECRET: z.string().nonempty({ message: 'GOOGLE_CLIENT_SECRET is required' }),
+  GOOGLE_REDIRECT_URI: z.url({ message: 'GOOGLE_REDIRECT_URI must be a valid URL' }),
 });
 
 // function to validate environment variables
