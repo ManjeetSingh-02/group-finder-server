@@ -43,16 +43,16 @@ const socialLinkSchema = new mongoose.Schema(
 // schema for user
 const userSchema = new mongoose.Schema(
   {
-    googleId: {
+    googleID: {
       type: String,
-      default: null,
-      sparse: true,
+      required: true,
       unique: true,
       trim: true,
     },
     fullName: {
       type: String,
       trim: true,
+      required: true,
     },
     email: {
       type: String,
@@ -61,15 +61,9 @@ const userSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
-    avatarUrl: {
-      type: String,
-      trim: true,
-      lowercase: true,
-    },
     username: {
       type: String,
-      default: null,
-      sparse: true,
+      required: true,
       unique: true,
       trim: true,
       lowercase: true,
