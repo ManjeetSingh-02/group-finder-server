@@ -6,6 +6,7 @@ import {
   REFRESH_TOKEN_COOKIE_CONFIG,
 } from '../../../utils/constants.js';
 import { asyncHandler } from '../../../utils/async-handler.js';
+import { handleGoogleLogin } from '../../../utils/google-auth.js';
 import { APIError } from '../../error.api.js';
 import { APIResponse } from '../../response.api.js';
 
@@ -94,8 +95,11 @@ export const googleLoginCallback = asyncHandler(async (req, res) => {
   // clear oauthNonce cookie as it's already verified
   res.clearCookie(OAUTH_COOKIE_CONFIG.NONCE_NAME);
 
-  // check if verificationTicket payload is valid
-  if (!verificationTicket || !verificationTicket.getPayload())
+  // extract payload from verificationTicket
+  const ticketPayload = verificationTicket?.getPayload();
+
+  // check if ticketPayload is valid
+  if (!ticketPayload)
     throw new APIError(500, {
       type: 'Google Login Callback Error',
       message: 'Failed to verify from Google',
@@ -103,23 +107,24 @@ export const googleLoginCallback = asyncHandler(async (req, res) => {
 
   // extract user info from ticket payload
   const userDetails = {
-    googleID: verificationTicket.getPayload().sub,
-    fullName: String(verificationTicket.getPayload().name).toLowerCase(),
-    email: String(verificationTicket.getPayload().email).toLowerCase(),
+    googleID: String(ticketPayload.sub),
+    fullName: String(ticketPayload.name),
+    email: String(ticketPayload.email).toLowerCase(),
   };
 
-  // handle googleLogin, retrieve tokens and userInfo
-  // const { userInfo, accessToken, refreshToken } = await handleGoogleLogin(userDetails);
+  // handle googleLogin, retrieve tokens
+  const { accessToken, refreshToken } = await handleGoogleLogin(userDetails);
 
   // success status to user
   // save refreshToken in httpOnly cookie
-  // send accessToken and userInfo in response
+  // send accessToken in response
   return res
     .status(200)
     .cookie(REFRESH_TOKEN_COOKIE_CONFIG.NAME, refreshToken, REFRESH_TOKEN_COOKIE_CONFIG.OPTIONS)
     .json(
-      new APIResponse(200, 'Google Login Successful', {
-        data: { accessToken, userInfo },
+      new APIResponse(200, {
+        message: 'Google Login Successful',
+        data: { accessToken },
       })
     );
 });
