@@ -23,6 +23,17 @@ export const OAUTH_COOKIE_CONFIG = {
   },
 };
 
+// export refreshToken Cookie constants
+export const REFRESH_TOKEN_COOKIE_CONFIG = {
+  NAME: 'refreshToken',
+  OPTIONS: {
+    httpOnly: true,
+    secure: envConfig.NODE_ENV === 'production',
+    sameSite: 'None',
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  },
+};
+
 // user roles
 export const USER_ROLES = {
   ADMIN: 'admin',
