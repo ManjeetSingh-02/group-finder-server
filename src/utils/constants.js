@@ -23,6 +23,12 @@ export const OAUTH_COOKIE_CONFIG = {
   },
 };
 
+// export accessToken expiry duration(15 mins)
+export const ACCESS_TOKEN_EXPIRY = 15 * 60 * 1000;
+
+// export refreshToken expiry duration (24 hrs)
+export const REFRESH_TOKEN_EXPIRY = 24 * 60 * 60 * 1000;
+
 // export refreshToken Cookie constants
 export const REFRESH_TOKEN_COOKIE_CONFIG = {
   NAME: 'refreshToken',
@@ -30,7 +36,7 @@ export const REFRESH_TOKEN_COOKIE_CONFIG = {
     httpOnly: true,
     secure: envConfig.NODE_ENV === 'production',
     sameSite: 'None',
-    maxAge: 30 * 24 * 60 * 60 * 1000,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
   },
 };
 

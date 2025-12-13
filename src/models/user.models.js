@@ -1,8 +1,14 @@
 // import local modules
-import { USER_ROLES, availableUserRoles } from '../utils/constants.js';
+import {
+  USER_ROLES,
+  availableUserRoles,
+  ACCESS_TOKEN_EXPIRY,
+  REFRESH_TOKEN_EXPIRY,
+} from '../utils/constants.js';
 
 // import external modules
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
 
 // schema for skill
 const skillSchema = new mongoose.Schema(
@@ -118,6 +124,20 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// method to generateAccessToken
+userSchema.methods.generateAccessToken = function () {
+  return jwt.sign({ id: this._id }, envConfig.ACCESS_TOKEN_SECRET, {
+    expiresIn: ACCESS_TOKEN_EXPIRY,
+  });
+};
+
+// method to generateRefreshToken
+userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign({ id: this._id }, envConfig.REFRESH_TOKEN_SECRET, {
+    expiresIn: REFRESH_TOKEN_EXPIRY,
+  });
+};
 
 // export user model
 export const User = mongoose.model('User', userSchema);
