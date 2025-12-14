@@ -10,8 +10,18 @@ export async function handleGoogleLogin(userDetails) {
   // LOGIN PATH: User is already registered
   // --------------------------------------------------
 
-  // If user exists
-  if (existingUser) return generateTokens(existingUser);
+  // If user exists, check for any missing googleID (Mainly ADMIN's) and update it
+  if (existingUser) {
+    if (!existingUser.googleID) {
+      // update googleID in db
+      existingUser.googleID = userDetails.googleID;
+
+      // save user
+      await existingUser.save({ validateBeforeSave: false });
+    }
+
+    return generateTokens(existingUser);
+  }
 
   // --------------------------------------------------
   // REGISTRATION PATH: User is not registered
