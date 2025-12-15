@@ -63,7 +63,7 @@ export const isLoggedIn = asyncHandler(async (req, _, next) => {
 export const isSessionActive = asyncHandler(async (req, _, next) => {
   // if refresh-token cookie is present, throw an error
   if (req.cookies[REFRESH_TOKEN_COOKIE_CONFIG.NAME])
-    throw new APIError(400, {
+    throw new APIError(403, {
       type: 'Active Session Error',
       message: 'User already logged in with an active session',
     });
