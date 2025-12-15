@@ -11,9 +11,9 @@ import { envConfig } from '../utils/env.js';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
-// helper function to check if user is admin for conditional required fields
+// helper function to check if user is system_admin for conditional required fields
 function isFieldRequired() {
-  return this.role !== USER_ROLES.ADMIN;
+  return this.role !== USER_ROLES.SYSTEM_ADMIN;
 }
 
 // schema for skill
