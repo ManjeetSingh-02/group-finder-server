@@ -12,7 +12,7 @@ export const createCohort = asyncHandler(async (req, res) => {
   // check if cohort with the same name already exists
   const existingCohort = await Cohort.findOne({ cohortName });
   if (existingCohort)
-    throw new APIError(400, {
+    throw new APIError(409, {
       type: 'Create Cohort Error',
       message: 'Cohort with the same name already exists',
     });
@@ -30,7 +30,7 @@ export const createCohort = asyncHandler(async (req, res) => {
     });
 
   // send success status to user
-  return res.json(
+  return res.status(201).json(
     new APIResponse(201, {
       message: 'Cohort created successfully',
       data: newCohort,
