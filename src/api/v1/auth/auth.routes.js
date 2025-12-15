@@ -8,11 +8,11 @@ import { Router } from 'express';
 // create a new router
 const router = Router();
 
-// @controller GET /google
-router.get('/google', isSessionActive, googleLogin);
+// @controller GET /login/google
+router.get('/login/google', isSessionActive, googleLogin);
 
-// @controller GET /google/callback
-router.get('/google/callback', googleLoginCallback);
+// @controller GET /login/google/callback
+router.get('/login/google/callback', googleLoginCallback);
 
 // export router
 export default router;

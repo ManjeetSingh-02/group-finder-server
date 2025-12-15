@@ -26,7 +26,7 @@ function generateTemporaryToken(length) {
   return crypto.randomBytes(length).toString('hex');
 }
 
-// @controller GET /google
+// @controller GET /login/google
 export const googleLogin = asyncHandler(async (_, res) => {
   // generate state and nonce for OAuth2
   const authState = generateTemporaryToken(16);
@@ -42,7 +42,7 @@ export const googleLogin = asyncHandler(async (_, res) => {
   );
 });
 
-// @controller GET /google/callback
+// @controller GET /login/google/callback
 export const googleLoginCallback = asyncHandler(async (req, res) => {
   // STATE VERIFICATION (CSRF PROTECTION)
   if (!req.query.state || req.query.state !== req.signedCookies[OAUTH_COOKIE_CONFIG.STATE_NAME]) {
