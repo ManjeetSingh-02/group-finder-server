@@ -19,6 +19,22 @@ const cohortDescriptionSchema = z
 
 // zod schema for createCohort
 export const createCohortSchema = z.object({
-  cohortName: cohortNameSchema,
-  cohortDescription: cohortDescriptionSchema,
+  body: z.object({
+    cohortName: cohortNameSchema,
+    cohortDescription: cohortDescriptionSchema,
+  }),
+});
+
+// zod schema for processCSVandAddUsersToCohort
+export const processCSVandAddUsersToCohortSchema = z.object({
+  params: z.object({
+    cohortName: z.string().trim().nonempty({ message: 'cohortName is required' }),
+  }),
+
+  files: z.object({
+    csvFiles: z
+      .array(z.any())
+      .min(1, { message: 'At least 1 CSV file is required' })
+      .max(5, { message: 'At most 5 CSV files are allowed' }),
+  }),
 });
