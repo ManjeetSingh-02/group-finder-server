@@ -34,7 +34,7 @@ export async function parseCSVFile(fileBuffer) {
     Readable.from(fileBuffer)
       .pipe(
         csvParser({
-          mapHeaders: ({ header }) => header.trim(),
+          mapHeaders: ({ header }) => header.trim().toLowerCase(),
           mapValues: ({ value }) => value.trim(),
         })
       )
