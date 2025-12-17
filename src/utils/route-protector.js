@@ -25,7 +25,7 @@ export const validateSchema = zodSchema =>
         type: 'Validation Error',
         message: 'Invalid request data',
         issues: validationResult.error.issues.map(
-          issue => `${issue.path.join(', ') || 'All fields'} ${issue.message}`
+          issue => `${issue.path.join('.') || 'All fields'}: ${issue.message}`
         ),
       });
 
