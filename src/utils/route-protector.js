@@ -29,6 +29,19 @@ export const isCohortValid = asyncHandler(async (req, _, next) => {
   next();
 });
 
+// function to check if user is allowed in the cohort
+export const isUserAllowedInCohort = asyncHandler(async (req, _, next) => {
+  // check if user's email is not in the allowed-user-emails list of the cohort
+  if (!req.cohort.allowedUserEmails.includes(req.user.email))
+    throw new APIError(403, {
+      type: 'Cohort Authorization Error',
+      message: `User with email '${req.user.email}' is not allowed in cohort '${req.cohort.cohortName}'`,
+    });
+
+  // forward request to next middleware
+  next();
+});
+
 // function to check for any validation errors
 export const validateSchema = zodSchema =>
   asyncHandler(async (req, _, next) => {

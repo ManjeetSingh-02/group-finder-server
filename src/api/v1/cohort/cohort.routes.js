@@ -4,6 +4,7 @@ import {
   hasRequiredRole,
   isCohortValid,
   isLoggedIn,
+  isUserAllowedInCohort,
   validateSchema,
 } from '../../../utils/route-protector.js';
 import {
@@ -84,7 +85,7 @@ router.patch(
 );
 
 // @route /:cohortName/group
-router.use('/:cohortName/group', isLoggedIn, isCohortValid, groupRouter);
+router.use('/:cohortName/group', isLoggedIn, isCohortValid, isUserAllowedInCohort, groupRouter);
 
 // export router
 export default router;
