@@ -61,12 +61,7 @@ export const getAllCohorts = asyncHandler(async (_, res) => {
 // @controller PATCH /:cohortName/process-csv
 export const processCSVandAddUsersToCohort = asyncHandler(async (req, res) => {
   // fetch cohort by name
-  const existingCohort = await Cohort.findOne({ cohortName: req.params.cohortName });
-  if (!existingCohort)
-    throw new APIError(404, {
-      type: 'Process CSV Error',
-      message: 'Cohort not found',
-    });
+  const existingCohort = req.cohort;
 
   // parse all uploaded CSV files
   const allParsedFileResults = await Promise.all(
@@ -102,16 +97,9 @@ export const processCSVandAddUsersToCohort = asyncHandler(async (req, res) => {
 export const addUserToCohort = asyncHandler(async (req, res) => {
   // add user email to cohort using $addToSet to avoid duplicates
   const updatedCohort = await Cohort.updateOne(
-    { cohortName: req.params.cohortName },
+    { _id: req.cohort.id },
     { $addToSet: { allowedUserEmails: req.body.userEmail } }
   );
-
-  // check if cohort was found
-  if (updatedCohort.matchedCount === 0)
-    throw new APIError(404, {
-      type: 'Add User Error',
-      message: 'Cohort not found',
-    });
 
   // check if cohort was updated
   if (updatedCohort.modifiedCount === 0)
@@ -132,16 +120,9 @@ export const addUserToCohort = asyncHandler(async (req, res) => {
 export const removeUserFromCohort = asyncHandler(async (req, res) => {
   // remove user email from cohort using $pull
   const updatedCohort = await Cohort.updateOne(
-    { cohortName: req.params.cohortName },
+    { _id: req.cohort.id },
     { $pull: { allowedUserEmails: req.body.userEmail } }
   );
-
-  // check if cohort was found
-  if (updatedCohort.matchedCount === 0)
-    throw new APIError(404, {
-      type: 'Remove User Error',
-      message: 'Cohort not found',
-    });
 
   // check if cohort was updated
   if (updatedCohort.modifiedCount === 0)
@@ -162,16 +143,9 @@ export const removeUserFromCohort = asyncHandler(async (req, res) => {
 export const updateCohortDescription = asyncHandler(async (req, res) => {
   // update cohort description in db
   const updatedCohort = await Cohort.updateOne(
-    { cohortName: req.params.cohortName },
+    { _id: req.cohort.id },
     { cohortDescription: req.body.cohortDescription }
   );
-
-  // check if cohort was found
-  if (updatedCohort.matchedCount === 0)
-    throw new APIError(404, {
-      type: 'Update Cohort Description Error',
-      message: 'Cohort not found',
-    });
 
   // check if cohort was updated
   if (updatedCohort.modifiedCount === 0)
