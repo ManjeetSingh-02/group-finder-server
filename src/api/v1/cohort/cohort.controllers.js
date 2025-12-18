@@ -3,7 +3,6 @@ import { asyncHandler } from '../../../utils/async-handler.js';
 import { APIError } from '../../error.api.js';
 import { APIResponse } from '../../response.api.js';
 import { Cohort } from '../../../models/index.js';
-import { USER_ROLES } from '../../../utils/constants.js';
 import { parseCSVFile } from '../../../utils/process-csv.js';
 import { CSV_UPLOAD_CONFIG } from '../../../utils/constants.js';
 
@@ -25,7 +24,6 @@ export const createCohort = asyncHandler(async (req, res) => {
     cohortName,
     cohortDescription,
     createdBy: req.user.id,
-    allowedUserEmails: req.user.role === USER_ROLES.SYSTEM_ADMIN ? [req.user.email] : [],
   });
   if (!newCohort)
     throw new APIError(500, {
