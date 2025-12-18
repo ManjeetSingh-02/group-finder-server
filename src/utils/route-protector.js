@@ -11,7 +11,9 @@ import jwt from 'jsonwebtoken';
 // function to check if cohort exists
 export const isCohortValid = asyncHandler(async (req, _, next) => {
   // get cohort from db
-  const existingCohort = await Cohort.findOne({ cohortName: req.params.cohortName });
+  const existingCohort = await Cohort.findOne({ cohortName: req.params.cohortName }).select(
+    '_id allowedUserEmails'
+  );
 
   // if cohort doesn't exist, throw an error
   if (!existingCohort)
@@ -21,9 +23,7 @@ export const isCohortValid = asyncHandler(async (req, _, next) => {
     });
 
   // set cohort in request object
-  req.cohort = {
-    id: existingCohort._id,
-  };
+  req.cohort = existingCohort;
 
   // forward request to next middleware
   next();
