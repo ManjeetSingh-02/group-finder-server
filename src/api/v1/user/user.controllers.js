@@ -8,9 +8,10 @@ import { User } from '../../../models/index.js';
 export const getAllUsers = asyncHandler(async (_, res) => {
   // fetch all users from the database
   const existingUsers = await User.find({})
-    .select('_id googleID email username role currentGroup enrolledCohorts')
+    .select('_id email username role currentGroup enrolledCohorts')
     .populate('currentGroup', 'groupName')
-    .populate('enrolledCohorts', 'cohortName');
+    .populate('enrolledCohorts', 'cohortName')
+    .lean();
 
   // send success status to user
   return res.status(200).json(
@@ -25,7 +26,7 @@ export const getAllUsers = asyncHandler(async (_, res) => {
 export const getUser = asyncHandler(async (req, res) => {
   // fetch user from db
   const existingUser = await User.findById(req.user.id)
-    .select('_id googleID email username role currentGroup enrolledCohorts')
+    .select('_id email username role currentGroup enrolledCohorts')
     .populate('currentGroup', 'groupName')
     .populate('enrolledCohorts', 'cohortName');
   if (!existingUser)
