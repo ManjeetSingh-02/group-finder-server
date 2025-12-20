@@ -26,7 +26,7 @@ export const getAllUsers = asyncHandler(async (_, res) => {
 // @controller GET /profile
 export const getUser = asyncHandler(async (req, res) => {
   // fetch user from db
-  const existingUser = await User.findById(req.user.id)
+  const existingUser = await User.findById(req.user._id)
     .select('_id email username role currentGroup enrolledCohorts userExpertise socialLinks')
     .populate('currentGroup', 'groupName')
     .populate('enrolledCohorts', 'cohortName');

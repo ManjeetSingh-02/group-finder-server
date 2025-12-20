@@ -54,8 +54,8 @@ export const createGroup = asyncHandler(async (req, res) => {
   // create new group
   const newGroup = await Group.create({
     groupName: req.body.groupName,
-    createdBy: req.user.id,
-    groupMembers: [req.user.id],
+    createdBy: req.user._id,
+    groupMembers: [req.user._id],
     associatedCohort: req.cohort.id,
   });
   if (!newGroup)
