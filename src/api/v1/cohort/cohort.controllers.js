@@ -95,7 +95,7 @@ export const processCSVandAddUsersToCohort = asyncHandler(async (req, res) => {
 export const addUserToCohort = asyncHandler(async (req, res) => {
   // add user email to cohort using $addToSet to avoid duplicates
   const updatedCohort = await Cohort.updateOne(
-    { _id: req.cohort.id },
+    { _id: req.cohort._id },
     { $addToSet: { allowedUserEmails: req.body.userEmail } }
   );
 
@@ -118,7 +118,7 @@ export const addUserToCohort = asyncHandler(async (req, res) => {
 export const removeUserFromCohort = asyncHandler(async (req, res) => {
   // remove user email from cohort using $pull
   const updatedCohort = await Cohort.updateOne(
-    { _id: req.cohort.id },
+    { _id: req.cohort._id },
     { $pull: { allowedUserEmails: req.body.userEmail } }
   );
 
@@ -141,7 +141,7 @@ export const removeUserFromCohort = asyncHandler(async (req, res) => {
 export const updateCohortDescription = asyncHandler(async (req, res) => {
   // update cohort description in db
   const updatedCohort = await Cohort.updateOne(
-    { _id: req.cohort.id },
+    { _id: req.cohort._id },
     { cohortDescription: req.body.cohortDescription }
   );
 
