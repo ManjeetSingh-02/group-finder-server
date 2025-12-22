@@ -23,7 +23,10 @@ export const isCohortValid = asyncHandler(async (req, _, next) => {
     });
 
   // set cohort in request object
-  req.cohort = existingCohort;
+  req.cohort = {
+    id: existingCohort._id,
+    allowedUserEmails: existingCohort.allowedUserEmails,
+  };
 
   // forward request to next middleware
   next();
