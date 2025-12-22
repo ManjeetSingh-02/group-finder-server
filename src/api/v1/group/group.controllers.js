@@ -10,14 +10,14 @@ export const getCohortDetailsandGroups = asyncHandler(async (req, res) => {
   const populatedCohortData = await req.cohort.populate([
     {
       path: 'createdBy',
-      select: '-_id username',
+      select: '_id username',
     },
     {
       path: 'associatedGroups',
       select: '_id groupName createdBy groupMembersCount maximumMembersCount roleRequirements',
       populate: {
         path: 'createdBy',
-        select: '-_id username',
+        select: '_id username',
       },
     },
   ]);
