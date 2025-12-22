@@ -63,7 +63,7 @@ export const isUserAllowedInGroup = asyncHandler(async (req, _, next) => {
   // fetch group from db
   const existingGroup = await Group.findOne({
     groupName: req.params.groupName,
-    associatedCohort: req.cohort._id,
+    associatedCohort: req.cohort.id,
   }).select(
     '_id groupName createdBy currentGroupMembers groupMembersCount maximumMembersCount roleRequirements groupAnnouncements'
   );
