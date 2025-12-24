@@ -112,6 +112,15 @@ const groupSchema = new mongoose.Schema(
       type: [announcementSchema],
       default: [],
     },
+    associatedApplications: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Application',
+        },
+      ],
+      default: [],
+    },
     associatedCohort: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Cohort',
