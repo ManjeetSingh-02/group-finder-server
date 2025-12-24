@@ -19,9 +19,9 @@ router.get('/profile', isLoggedIn, getUser);
 // @route PATCH /
 router.patch('/', isLoggedIn, validateSchema(updateUserProfileSchema), updateUserProfile);
 
-// @route PATCH /role
+// @route PATCH /update-role
 router.patch(
-  '/role',
+  '/update-role',
   isLoggedIn,
   hasRequiredRole([USER_ROLES.SYSTEM_ADMIN]),
   validateSchema(updateUserRoleSchema),

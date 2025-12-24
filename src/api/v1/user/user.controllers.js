@@ -77,7 +77,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
   );
 });
 
-// @controller PATCH /role
+// @controller PATCH /update-role
 export const updateUserRole = asyncHandler(async (req, res) => {
   // check if user is trying to update his own role
   if (req.user.email === req.body.userEmail)
