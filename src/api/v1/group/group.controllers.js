@@ -106,3 +106,34 @@ export const getGroupDetails = asyncHandler(async (req, res) => {
     })
   );
 });
+
+// @controller PATCH /:groupName
+export const updateGroupRoleRequirements = asyncHandler(async (req, res) => {
+  // check if user has permission to update group
+  if (!req.group.groupAccess)
+    throw new APIError(403, {
+      type: 'Permission Denied',
+      message: 'You do not have permission to update this group',
+    });
+
+  // update group's role requirements
+  const updatedGroup = await Group.findByIdAndUpdate(
+    req.group.id,
+    {
+      roleRequirements: req.body.roleRequirements,
+    },
+    { runValidators: true, new: true }
+  );
+  if (!updatedGroup)
+    throw new APIError(500, {
+      type: 'Update Group Error',
+      message: 'Something went wrong while updating the group',
+    });
+
+  // send success status to user
+  return res.status(200).json(
+    new APIResponse(200, {
+      message: 'Group role requirements updated successfully',
+    })
+  );
+});
