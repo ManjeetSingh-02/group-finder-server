@@ -19,7 +19,7 @@ export async function handleGoogleLogin(userDetails) {
       existingUser.googleID = userDetails.googleID;
 
       // save user
-      await existingUser.save({ validateBeforeSave: false });
+      await existingUser.save();
     }
 
     return generateTokens(existingUser);
