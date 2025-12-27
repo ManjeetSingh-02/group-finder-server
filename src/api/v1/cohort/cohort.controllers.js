@@ -3,8 +3,11 @@ import { asyncHandler } from '../../../utils/async-handler.js';
 import { APIError } from '../../error.api.js';
 import { APIResponse } from '../../response.api.js';
 import { Cohort } from '../../../models/index.js';
-import { parseCSVFile } from '../../../utils/process-csv.js';
 import { CSV_UPLOAD_CONFIG } from '../../../utils/constants.js';
+
+// import external modules
+import { Readable } from 'stream';
+import csvParser from 'csv-parser';
 
 // @controller POST /
 export const createCohort = asyncHandler(async (req, res) => {
@@ -189,3 +192,23 @@ export const updateCohortDescription = asyncHandler(async (req, res) => {
     })
   );
 });
+
+// sub-function to parse one CSV file buffer
+async function parseCSVFile(fileBuffer) {
+  // array to hold parsed data
+  const parsedDataArray = [];
+
+  // return a promise that resolves with parsed data or rejects with an error
+  return new Promise((resolve, reject) => {
+    Readable.from(fileBuffer)
+      .pipe(
+        csvParser({
+          mapHeaders: ({ header }) => header.trim().toLowerCase(),
+          mapValues: ({ value }) => value.trim(),
+        })
+      )
+      .on('data', parseData => parsedDataArray.push(parseData))
+      .on('error', parseError => reject(parseError))
+      .on('end', () => resolve(parsedDataArray));
+  });
+}
