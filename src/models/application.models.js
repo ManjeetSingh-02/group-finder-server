@@ -1,14 +1,12 @@
 // import local modules
-import { APPLICATION_STATUS, availableApplicationStatus } from '../utils/constants.js';
+import {
+  APPLICATION_STATUS,
+  availableApplicationStatus,
+  DEFAULT_REVIEWER_FEEDBACK,
+} from '../utils/constants.js';
 
 // import external modules
 import mongoose from 'mongoose';
-
-// function to check if reviewer feedback is required based on application status
-function isReviewerFeedbackRequired() {
-  // if application status is REJECTED, feedback is required
-  return this.ownerDocument().applicationStatus === APPLICATION_STATUS.REJECTED;
-}
 
 // schema for applicant
 const applicantSchema = new mongoose.Schema(
@@ -73,7 +71,7 @@ const applicationReviewerSchema = new mongoose.Schema(
     },
     applicationReviewerFeedback: {
       type: String,
-      required: isReviewerFeedbackRequired,
+      default: DEFAULT_REVIEWER_FEEDBACK.PENDING,
       trim: true,
       minLength: 10,
       maxLength: 200,
