@@ -58,12 +58,6 @@ export const getGroupDetails = asyncHandler(async (req, res) => {
     })
     .lean();
 
-  if (!existingGroup)
-    throw new APIErrorResponse(404, {
-      type: 'Group Fetch Error',
-      message: 'Group not found',
-    });
-
   // send success status to user
   return res.status(200).json(
     new APISuccessResponse(200, {
