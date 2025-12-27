@@ -6,8 +6,8 @@
   "scripts": {
     "start": "npm run system_admin:check && node --env-file=.env src/index.js",
     "dev": "npm run system_admin:check && nodemon --env-file=.env src/index.js",
-    "system_admin:check": "node --env-file=.env src/scripts/checkSystemAdmin.js",
-    "system_admin:init": "node --env-file=.env src/scripts/initializeSystemAdmin.js",
+    "system_admin:check": "node --env-file=.env src/system-scripts/checkSystemAdmin.js",
+    "system_admin:init": "node --env-file=.env src/system-scripts/initializeSystemAdmin.js",
     "format": "prettier --write ."
   },
   "repository": {
