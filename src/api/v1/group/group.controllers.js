@@ -1,7 +1,6 @@
 // import local modules
 import { asyncHandler } from '../../../utils/async-handler.js';
-import { APIResponse } from '../../response.api.js';
-import { APIError } from '../../error.api.js';
+import { APIErrorResponse, APISuccessResponse } from '../../response.api.js';
 import { Group, User } from '../../../models/index.js';
 
 // @controller POST /
@@ -14,7 +13,7 @@ export const createGroup = asyncHandler(async (req, res) => {
     .select('_id')
     .lean();
   if (existingGroup)
-    throw new APIError(409, {
+    throw new APIErrorResponse(409, {
       type: 'Create Group Error',
       message: 'Group with the same name already exists',
     });
@@ -26,7 +25,7 @@ export const createGroup = asyncHandler(async (req, res) => {
     associatedCohort: req.cohort.id,
   });
   if (!newGroup)
-    throw new APIError(500, {
+    throw new APIErrorResponse(500, {
       type: 'Create Group Error',
       message: 'Something went wrong while creating the group',
     });
@@ -38,7 +37,7 @@ export const createGroup = asyncHandler(async (req, res) => {
 
   // send success status to user
   return res.status(201).json(
-    new APIResponse(201, {
+    new APISuccessResponse(201, {
       message: 'Group created successfully',
       data: { newGroupName: newGroup.groupName },
     })
@@ -60,14 +59,14 @@ export const getGroupDetails = asyncHandler(async (req, res) => {
     .lean();
 
   if (!existingGroup)
-    throw new APIError(404, {
+    throw new APIErrorResponse(404, {
       type: 'Group Fetch Error',
       message: 'Group not found',
     });
 
   // send success status to user
   return res.status(200).json(
-    new APIResponse(200, {
+    new APISuccessResponse(200, {
       message: 'Group details fetched successfully',
       data: existingGroup,
     })
@@ -78,7 +77,7 @@ export const getGroupDetails = asyncHandler(async (req, res) => {
 export const updateGroupRoleRequirements = asyncHandler(async (req, res) => {
   // check if user has permission to update group
   if (!req.group.groupAccess)
-    throw new APIError(403, {
+    throw new APIErrorResponse(403, {
       type: 'Permission Denied',
       message: 'You do not have permission to update this group',
     });
@@ -92,14 +91,14 @@ export const updateGroupRoleRequirements = asyncHandler(async (req, res) => {
     { runValidators: true, new: true }
   );
   if (!updatedGroup)
-    throw new APIError(500, {
+    throw new APIErrorResponse(500, {
       type: 'Update Group Error',
       message: 'Something went wrong while updating the group',
     });
 
   // send success status to user
   return res.status(200).json(
-    new APIResponse(200, {
+    new APISuccessResponse(200, {
       message: 'Group role requirements updated successfully',
     })
   );
@@ -109,7 +108,7 @@ export const updateGroupRoleRequirements = asyncHandler(async (req, res) => {
 export const updateGroupAnnouncements = asyncHandler(async (req, res) => {
   // check if user has permission to post announcement
   if (!req.group.groupAccess)
-    throw new APIError(403, {
+    throw new APIErrorResponse(403, {
       type: 'Permission Denied',
       message: 'You do not have permission to post announcement in this group',
     });
@@ -123,14 +122,14 @@ export const updateGroupAnnouncements = asyncHandler(async (req, res) => {
     { runValidators: true, new: true }
   );
   if (!updatedGroup)
-    throw new APIError(500, {
+    throw new APIErrorResponse(500, {
       type: 'Update Announcement Error',
       message: 'Something went wrong while posting the announcement',
     });
 
   // send success status to user
   return res.status(200).json(
-    new APIResponse(200, {
+    new APISuccessResponse(200, {
       message: 'Group announcement posted successfully',
     })
   );

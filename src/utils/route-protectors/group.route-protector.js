@@ -1,5 +1,5 @@
 // import local modules
-import { APIError } from '../../api/error.api.js';
+import { APIErrorResponse } from '../../api/response.api.js';
 import { asyncHandler } from '../async-handler.js';
 import { USER_ROLES } from '../constants.js';
 import { Group } from '../../models/index.js';
@@ -8,7 +8,7 @@ import { Group } from '../../models/index.js';
 export const isUserAlreadyInAGroup = asyncHandler(async (req, _, next) => {
   // if user is already in a group, throw an error
   if (req.user.currentGroup)
-    throw new APIError(409, {
+    throw new APIErrorResponse(409, {
       type: 'Group Membership Error',
       message: 'User is already in a group, cannot join another group',
     });
@@ -27,7 +27,7 @@ export const isUserAllowedInGroup = asyncHandler(async (req, _, next) => {
     .select('_id createdBy')
     .lean();
   if (!existingGroup)
-    throw new APIError(404, {
+    throw new APIErrorResponse(404, {
       type: 'Group Validation Error',
       message: `Group '${req.params.groupName}' not found in this cohort`,
     });
@@ -38,7 +38,7 @@ export const isUserAllowedInGroup = asyncHandler(async (req, _, next) => {
   // check if user role is student and not a part of group then throw an error
   if (req.user.role === USER_ROLES.STUDENT) {
     if (!req.user.currentGroup || String(req.user.currentGroup) !== String(existingGroup._id))
-      throw new APIError(403, {
+      throw new APIErrorResponse(403, {
         type: 'Group Authorization Error',
         message: `User is not a member of group '${req.params.groupName}'`,
       });

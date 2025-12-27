@@ -1,7 +1,6 @@
 // import local modules
 import { asyncHandler } from '../../../utils/async-handler.js';
-import { APIError } from '../../error.api.js';
-import { APIResponse } from '../../response.api.js';
+import { APIErrorResponse, APISuccessResponse } from '../../response.api.js';
 import { Cohort } from '../../../models/index.js';
 import { CSV_UPLOAD_CONFIG } from '../../../utils/constants.js';
 
@@ -16,7 +15,7 @@ export const createCohort = asyncHandler(async (req, res) => {
     .select('_id')
     .lean();
   if (existingCohort)
-    throw new APIError(409, {
+    throw new APIErrorResponse(409, {
       type: 'Create Cohort Error',
       message: 'Cohort with the same name already exists',
     });
@@ -28,14 +27,14 @@ export const createCohort = asyncHandler(async (req, res) => {
     createdBy: req.user.id,
   });
   if (!newCohort)
-    throw new APIError(500, {
+    throw new APIErrorResponse(500, {
       type: 'Create Cohort Error',
       message: 'Something went wrong while creating the cohort',
     });
 
   // send success status to user
   return res.status(201).json(
-    new APIResponse(201, {
+    new APISuccessResponse(201, {
       message: 'Cohort created successfully',
       data: { newCohortName: newCohort.cohortName },
     })
@@ -52,7 +51,7 @@ export const getAllCohorts = asyncHandler(async (_, res) => {
 
   // send success status to user
   return res.status(200).json(
-    new APIResponse(200, {
+    new APISuccessResponse(200, {
       message: 'All Cohorts fetched successfully',
       data: allCohorts,
     })
@@ -76,14 +75,14 @@ export const getCohortDetails = asyncHandler(async (req, res) => {
     })
     .lean();
   if (!existingCohort)
-    throw new APIError(404, {
+    throw new APIErrorResponse(404, {
       type: 'Cohort Fetch Error',
       message: 'Cohort not found',
     });
 
   // send success status to user
   return res.status(200).json(
-    new APIResponse(200, {
+    new APISuccessResponse(200, {
       message: 'Cohort details fetched successfully',
       data: existingCohort,
     })
@@ -118,7 +117,7 @@ export const processCSVandAddUsersToCohort = asyncHandler(async (req, res) => {
 
   // send success status to user
   return res.status(200).json(
-    new APIResponse(200, {
+    new APISuccessResponse(200, {
       message: 'CSV processed and userEmails added to cohort successfully',
     })
   );
@@ -134,14 +133,14 @@ export const addUserToCohort = asyncHandler(async (req, res) => {
 
   // check if cohort was updated
   if (updatedCohort.modifiedCount === 0)
-    throw new APIError(409, {
+    throw new APIErrorResponse(409, {
       type: 'Add User Error',
       message: 'User email already exists in cohort',
     });
 
   // send success status to user
   return res.status(200).json(
-    new APIResponse(200, {
+    new APISuccessResponse(200, {
       message: 'User email added to cohort successfully',
     })
   );
@@ -157,14 +156,14 @@ export const removeUserFromCohort = asyncHandler(async (req, res) => {
 
   // check if cohort was updated
   if (updatedCohort.modifiedCount === 0)
-    throw new APIError(404, {
+    throw new APIErrorResponse(404, {
       type: 'Remove User Error',
       message: 'User email not found in cohort',
     });
 
   // send success status to user
   return res.status(200).json(
-    new APIResponse(200, {
+    new APISuccessResponse(200, {
       message: 'User email removed from cohort successfully',
     })
   );
@@ -180,14 +179,14 @@ export const updateCohortDescription = asyncHandler(async (req, res) => {
 
   // check if cohort was updated
   if (updatedCohort.modifiedCount === 0)
-    throw new APIError(409, {
+    throw new APIErrorResponse(409, {
       type: 'Update Cohort Description Error',
       message: 'Something went wrong while updating the cohort description',
     });
 
   // send success status to user
   return res.status(200).json(
-    new APIResponse(200, {
+    new APISuccessResponse(200, {
       message: 'Cohort description updated successfully',
     })
   );

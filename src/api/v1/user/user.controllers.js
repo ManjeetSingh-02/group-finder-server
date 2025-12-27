@@ -1,7 +1,6 @@
 // import local modules
 import { asyncHandler } from '../../../utils/async-handler.js';
-import { APIResponse } from '../../response.api.js';
-import { APIError } from '../../error.api.js';
+import { APIErrorResponse, APISuccessResponse } from '../../response.api.js';
 import { User } from '../../../models/index.js';
 import { USER_ROLES } from '../../../utils/constants.js';
 
@@ -17,13 +16,13 @@ export const getUser = asyncHandler(async (req, res) => {
     })
     .lean();
   if (!existingUser)
-    throw new APIError(404, {
+    throw new APIErrorResponse(404, {
       message: 'User not found',
     });
 
   // send success status to user
   return res.status(200).json(
-    new APIResponse(200, {
+    new APISuccessResponse(200, {
       message: 'Fetched profile successfully',
       data: existingUser,
     })
@@ -34,7 +33,7 @@ export const getUser = asyncHandler(async (req, res) => {
 export const updateUserProfile = asyncHandler(async (req, res) => {
   // if no fields to update are present in the body, throw error
   if (!req.body.newUserExpertise && !req.body.newSocialLinks)
-    throw new APIError(400, {
+    throw new APIErrorResponse(400, {
       message: 'No fields are provided to update user profile',
     });
 
@@ -50,13 +49,13 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
 
   // check if user was updated
   if (!updatedUser)
-    throw new APIError(500, {
+    throw new APIErrorResponse(500, {
       message: 'Failed to update profile',
     });
 
   // send success status to user
   return res.status(200).json(
-    new APIResponse(200, {
+    new APISuccessResponse(200, {
       message: 'Profile updated successfully',
     })
   );
@@ -66,26 +65,26 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
 export const updateUserRole = asyncHandler(async (req, res) => {
   // check if user is trying to update his own role
   if (req.user.email === req.body.userEmail)
-    throw new APIError(400, {
+    throw new APIErrorResponse(400, {
       message: 'You cannot update your own role',
     });
 
   // fetch user from db
   const existingUser = await User.findOne({ email: req.body.userEmail });
   if (!existingUser)
-    throw new APIError(404, {
+    throw new APIErrorResponse(404, {
       message: 'User not found',
     });
 
   // check if newRole is system_admin
   if (req.body.newRole === USER_ROLES.SYSTEM_ADMIN)
-    throw new APIError(403, {
+    throw new APIErrorResponse(403, {
       message: 'Only one system admin is allowed in the system',
     });
 
   // check if user has already the role
   if (existingUser.role === req.body.newRole)
-    throw new APIError(400, {
+    throw new APIErrorResponse(400, {
       message: `User already has the role of ${req.body.newRole}`,
     });
 
@@ -97,7 +96,7 @@ export const updateUserRole = asyncHandler(async (req, res) => {
 
   // send success status to user
   return res.status(200).json(
-    new APIResponse(200, {
+    new APISuccessResponse(200, {
       message: 'User role updated successfully',
     })
   );

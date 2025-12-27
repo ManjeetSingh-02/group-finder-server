@@ -1,5 +1,5 @@
 // import local modules
-import { APIError } from '../../api/error.api.js';
+import { APIErrorResponse } from '../../api/response.api.js';
 import { asyncHandler } from '../async-handler.js';
 import { Cohort } from '../../models/index.js';
 
@@ -12,7 +12,7 @@ export const isCohortValid = asyncHandler(async (req, _, next) => {
 
   // if cohort doesn't exist, throw an error
   if (!existingCohort)
-    throw new APIError(404, {
+    throw new APIErrorResponse(404, {
       type: 'Cohort Validation Error',
       message: `Cohort with name '${req.params.cohortName}' does not exist`,
     });
@@ -31,7 +31,7 @@ export const isCohortValid = asyncHandler(async (req, _, next) => {
 export const isUserAllowedInCohort = asyncHandler(async (req, _, next) => {
   // check if user's email is not in the allowed-user-emails list of the cohort
   if (!req.cohort.allowedUserEmails.includes(req.user.email))
-    throw new APIError(403, {
+    throw new APIErrorResponse(403, {
       type: 'Cohort Authorization Error',
       message: `User with email '${req.user.email}' is not allowed in cohort '${req.params.cohortName}'`,
     });

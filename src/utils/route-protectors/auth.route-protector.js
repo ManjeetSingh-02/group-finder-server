@@ -1,5 +1,5 @@
 // import local modules
-import { APIError } from '../../api/error.api.js';
+import { APIErrorResponse } from '../../api/response.api.js';
 import { asyncHandler } from '../async-handler.js';
 import { User } from '../../models/index.js';
 
@@ -11,7 +11,7 @@ export const isLoggedIn = asyncHandler(async (req, _, next) => {
   // get authorization headers
   const authorizationHeaders = req.headers.authorization;
   if (!authorizationHeaders || !authorizationHeaders.startsWith('Bearer '))
-    throw new APIError(401, {
+    throw new APIErrorResponse(401, {
       type: 'Authentication Error',
       message: 'Access Token is missing or in an invalid format',
     });
@@ -24,7 +24,7 @@ export const isLoggedIn = asyncHandler(async (req, _, next) => {
     .select('_id email role currentGroup')
     .lean();
   if (!loggedInUser)
-    throw new APIError(401, {
+    throw new APIErrorResponse(401, {
       type: 'Authentication Error',
       message: 'User associated with this token no longer exists',
     });
@@ -48,13 +48,13 @@ function decodeAccessToken(accessToken) {
   } catch (error) {
     // if token is expired, throw an TokenExpiredError
     if (error.name === 'TokenExpiredError')
-      throw new APIError(401, {
+      throw new APIErrorResponse(401, {
         type: 'Token Expired Error',
         message: 'Access Token expired, generate a new one',
       });
 
     // for any other error, throw a JWT error
-    throw new APIError(401, {
+    throw new APIErrorResponse(401, {
       type: 'JWT Error',
       message: 'Access Token is invalid',
     });

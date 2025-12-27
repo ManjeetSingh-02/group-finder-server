@@ -6,8 +6,7 @@ import {
   REFRESH_TOKEN_COOKIE_CONFIG,
 } from '../../../utils/constants.js';
 import { asyncHandler } from '../../../utils/async-handler.js';
-import { APIError } from '../../error.api.js';
-import { APIResponse } from '../../response.api.js';
+import { APIErrorResponse, APISuccessResponse } from '../../response.api.js';
 import { Cohort, User } from '../../../models/index.js';
 
 // import external modules
@@ -51,7 +50,7 @@ export const googleLoginCallback = asyncHandler(async (req, res) => {
     res.clearCookie(OAUTH_COOKIE_CONFIG.NONCE_NAME);
 
     // throw error for invalid oauthState
-    throw new APIError(403, {
+    throw new APIErrorResponse(403, {
       type: 'Google Login Callback Error',
       message: 'Invalid oauthState received from Google',
     });
@@ -67,7 +66,7 @@ export const googleLoginCallback = asyncHandler(async (req, res) => {
     res.clearCookie(OAUTH_COOKIE_CONFIG.NONCE_NAME);
 
     // throw error for token fetch failure
-    throw new APIError(500, {
+    throw new APIErrorResponse(500, {
       type: 'Google Login Callback Error',
       message: 'Something went wrong while fetching tokens from Google',
     });
@@ -79,7 +78,7 @@ export const googleLoginCallback = asyncHandler(async (req, res) => {
     res.clearCookie(OAUTH_COOKIE_CONFIG.NONCE_NAME);
 
     // throw error for missing oauthNonce
-    throw new APIError(400, {
+    throw new APIErrorResponse(400, {
       type: 'Google Login Callback Error',
       message: 'oauthNonce cookie is missing',
     });
@@ -100,7 +99,7 @@ export const googleLoginCallback = asyncHandler(async (req, res) => {
 
   // check if ticketPayload is valid
   if (!ticketPayload)
-    throw new APIError(500, {
+    throw new APIErrorResponse(500, {
       type: 'Google Login Callback Error',
       message: 'Failed to verify from Google',
     });
@@ -121,7 +120,7 @@ export const googleLoginCallback = asyncHandler(async (req, res) => {
     .status(200)
     .cookie(REFRESH_TOKEN_COOKIE_CONFIG.NAME, refreshToken, REFRESH_TOKEN_COOKIE_CONFIG.OPTIONS)
     .json(
-      new APIResponse(200, {
+      new APISuccessResponse(200, {
         message: 'Google Login Successful',
         data: { accessToken },
       })
@@ -143,7 +142,7 @@ export const googleLogout = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .clearCookie(REFRESH_TOKEN_COOKIE_CONFIG.NAME, REFRESH_TOKEN_COOKIE_CONFIG.OPTIONS)
-    .json(new APIResponse(200, { message: 'Logout Successful' }));
+    .json(new APISuccessResponse(200, { message: 'Logout Successful' }));
 });
 
 // sub-function to handle login and registration flow for Google OAuth2
@@ -183,7 +182,7 @@ async function handleGoogleLogin(userDetails) {
 
   // if not allowed, throw error
   if (allowedCohorts.length === 0)
-    throw new APIError(403, {
+    throw new APIErrorResponse(403, {
       type: 'Google Login Callback Error',
       message: 'You are not authorized to access this application.',
     });
@@ -195,7 +194,7 @@ async function handleGoogleLogin(userDetails) {
     username: `${userDetails.email.split('@')[0].slice(0, 10)}${generateRandomSuffix()}`,
   });
   if (!newUser)
-    throw new APIError(500, {
+    throw new APIErrorResponse(500, {
       type: 'Google Login Callback Error',
       message: 'Something went wrong while creating a new user.',
     });
