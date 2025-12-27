@@ -1,6 +1,10 @@
 // import local modules
 import { USER_ROLES } from '../../../utils/constants.js';
-import { hasRequiredRole, isLoggedIn, validateSchema } from '../../../utils/route-protector.js';
+import {
+  hasRequiredRole,
+  isLoggedIn,
+  validateSchema,
+} from '../../../utils/route-protectors/index.js';
 import { getUser, updateUserProfile, updateUserRole } from './user.controllers.js';
 import { updateUserProfileSchema, updateUserRoleSchema } from './user.zodschemas.js';
 

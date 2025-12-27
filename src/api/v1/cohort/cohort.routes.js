@@ -6,7 +6,7 @@ import {
   isLoggedIn,
   isUserAllowedInCohort,
   validateSchema,
-} from '../../../utils/route-protector.js';
+} from '../../../utils/route-protectors/index.js';
 import {
   addUserToCohort,
   createCohort,

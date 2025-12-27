@@ -1,6 +1,6 @@
 // import local modules
 import { googleLogin, googleLoginCallback, googleLogout } from './auth.controllers.js';
-import { isLoggedIn, isSessionActive } from '../../../utils/route-protector.js';
+import { isLoggedIn, isSessionActive } from '../../../utils/route-protectors/index.js';
 
 // import external modules
 import { Router } from 'express';
