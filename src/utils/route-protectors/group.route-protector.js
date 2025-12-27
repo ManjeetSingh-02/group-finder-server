@@ -33,7 +33,9 @@ export const doesGroupExistInCohort = asyncHandler(async (req, _, next) => {
     });
 
   // set group id in request object
-  req.group.id = existingGroup._id;
+  req.group = {
+    id: existingGroup._id,
+  };
 
   // forward request to next middleware
   next();
