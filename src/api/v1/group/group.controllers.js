@@ -75,13 +75,6 @@ export const getGroupDetails = asyncHandler(async (req, res) => {
 
 // @controller PATCH /:groupName/role-requirements
 export const updateGroupRoleRequirements = asyncHandler(async (req, res) => {
-  // check if user has permission to update group
-  if (!req.group.groupAccess)
-    throw new APIErrorResponse(403, {
-      type: 'Permission Denied',
-      message: 'You do not have permission to update this group',
-    });
-
   // update group's role requirements
   const updatedGroup = await Group.findByIdAndUpdate(
     req.group.id,
@@ -106,13 +99,6 @@ export const updateGroupRoleRequirements = asyncHandler(async (req, res) => {
 
 // @controller PATCH /:groupName/announcements
 export const updateGroupAnnouncements = asyncHandler(async (req, res) => {
-  // check if user has permission to post announcement
-  if (!req.group.groupAccess)
-    throw new APIErrorResponse(403, {
-      type: 'Permission Denied',
-      message: 'You do not have permission to post announcement in this group',
-    });
-
   // push new announcement group's announcement array field
   const updatedGroup = await Group.findByIdAndUpdate(
     req.group.id,

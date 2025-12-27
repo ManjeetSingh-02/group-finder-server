@@ -9,6 +9,7 @@ import {
   isUserAlreadyInAGroup,
   isUserAllowedInGroup,
   validateSchema,
+  isUserGroupAdmin,
 } from '../../../utils/route-protectors/index.js';
 import {
   createGroupSchema,
@@ -33,6 +34,7 @@ router.get('/:groupName', isUserAllowedInGroup, getGroupDetails);
 router.patch(
   '/:groupName/role-requirements',
   isUserAllowedInGroup,
+  isUserGroupAdmin,
   validateSchema(updateGroupRoleRequirementsSchema),
   updateGroupRoleRequirements
 );
@@ -41,6 +43,7 @@ router.patch(
 router.patch(
   '/:groupName/announcements',
   isUserAllowedInGroup,
+  isUserGroupAdmin,
   validateSchema(updateGroupAnnouncementsSchema),
   updateGroupAnnouncements
 );

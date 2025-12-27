@@ -59,3 +59,16 @@ export const isUserAllowedInGroup = asyncHandler(async (req, _, next) => {
   // forward request to next middleware
   next();
 });
+
+// function to check if user has admin access to the group
+export const isUserGroupAdmin = asyncHandler(async (req, _, next) => {
+  // if user does not have group admin access, throw an error
+  if (!req.group.groupAccess)
+    throw new APIErrorResponse(403, {
+      type: 'Group Admin Authorization Error',
+      message: 'User does not have admin access for this group',
+    });
+
+  // forward request to next middleware
+  next();
+});
