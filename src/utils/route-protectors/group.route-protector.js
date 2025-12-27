@@ -45,7 +45,7 @@ export const isUserAllowedInGroup = asyncHandler(async (req, _, next) => {
   }
 
   // if user is creator of the group, set admin access to true
-  const isGroupCreator = String(existingGroup.createdBy) === String(req.user.id);
+  const isGroupCreator = existingGroup.createdBy.equals(req.user.id);
 
   // determine if user has group access
   const hasGroupAccess = isAdmin || isGroupCreator;
