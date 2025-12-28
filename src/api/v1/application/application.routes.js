@@ -10,7 +10,9 @@ import {
   isUserAlreadyInAGroup,
   isUserGroupAdmin,
   userAlreadyHasAPendingApplication,
+  validateSchema,
 } from '../../../utils/route-protectors/index.js';
+import { createApplicationSchema } from './application.zodschemas.js';
 
 // import external modules
 import { Router } from 'express';
@@ -19,7 +21,13 @@ import { Router } from 'express';
 const router = Router({ mergeParams: true });
 
 // @route POST /
-router.post('/', isUserAlreadyInAGroup, userAlreadyHasAPendingApplication, createApplication);
+router.post(
+  '/',
+  isUserAlreadyInAGroup,
+  userAlreadyHasAPendingApplication,
+  validateSchema(createApplicationSchema),
+  createApplication
+);
 
 // @route PATCH /accept
 router.patch('/accept', isUserGroupAdmin, acceptApplication);
