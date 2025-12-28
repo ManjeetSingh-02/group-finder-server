@@ -9,7 +9,7 @@ import {
   doesApplicationExistInGroup,
   isUserAlreadyInAGroup,
   isUserGroupAdmin,
-  userAlreadyHasAPendingApplication,
+  userAlreadyHasUnderReviewApplication,
   validateSchema,
 } from '../../../utils/route-protectors/index.js';
 import { createApplicationSchema } from './application.zodschemas.js';
@@ -24,7 +24,7 @@ const router = Router({ mergeParams: true });
 router.post(
   '/',
   isUserAlreadyInAGroup,
-  userAlreadyHasAPendingApplication,
+  userAlreadyHasUnderReviewApplication,
   validateSchema(createApplicationSchema),
   postApplication
 );

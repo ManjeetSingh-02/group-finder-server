@@ -8,7 +8,7 @@ import { APPLICATION_STATUS } from '../constants.js';
 export const doesApplicationExistInGroup = asyncHandler(async (req, _, next) => {
   // find application by applicationID and groupID
   const existingApplication = await Application.findOne({
-    _id: req.body.applicationID,
+    _id: req.params.applicationID,
     'applicantDetails.groupID': req.params.groupID,
   }).lean();
   if (!existingApplication)
@@ -27,8 +27,8 @@ export const doesApplicationExistInGroup = asyncHandler(async (req, _, next) => 
   next();
 });
 
-// function to check if user already has a pending application to any group
-export const userAlreadyHasAPendingApplication = asyncHandler(async (req, _, next) => {
+// function to check if user already has a under review application
+export const userAlreadyHasUnderReviewApplication = asyncHandler(async (req, _, next) => {
   // find pending application by the user
   const pendingApplication = await Application.findOne({
     'applicantDetails.applicantID': req.user.id,
