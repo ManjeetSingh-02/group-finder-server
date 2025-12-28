@@ -63,9 +63,9 @@ export const MAX_GROUP_MEMBERS = 4;
 
 // application status
 export const APPLICATION_STATUS = {
-  PENDING: 'pending',
+  UNDER_REVIEW: 'under_review',
   APPROVED: 'approved',
-  REJECTED: 'rejected',
+  DENIED: 'denied',
   WITHDRAWN: 'withdrawn',
 };
 
@@ -74,11 +74,11 @@ export const availableApplicationStatus = Object.values(APPLICATION_STATUS);
 
 // default application reviewer feedbacks
 export const DEFAULT_REVIEWER_FEEDBACK = {
-  PENDING:
+  UNDER_REVIEW:
     'Your application has been received and is currently under review by creator of this group.',
   APPROVED:
     'Congratulations! Your application has been approved. You are now a member of this group.',
-  REJECTED:
+  DENIED:
     'Thank you for your interest. Unfortunately, the group creator has decided not to move forward with your application at this time.',
   WITHDRAWN: 'This application was withdrawn by the applicant before a decision was made.',
 };
