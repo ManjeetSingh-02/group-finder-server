@@ -67,7 +67,6 @@ const applicationReviewerSchema = new mongoose.Schema(
     applicationReviewerID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
     },
     applicationReviewerFeedback: {
       type: String,
