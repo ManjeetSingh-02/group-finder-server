@@ -24,6 +24,12 @@ export const validateSchema = zodSchema =>
         ),
       });
 
+    // replace request data with the validated data if available
+    if (validationResult.data.body) req.body = validationResult.data.body;
+    if (validationResult.data.query) req.query = validationResult.data.query;
+    if (validationResult.data.params) req.params = validationResult.data.params;
+    if (validationResult.data.files) req.files = validationResult.data.files;
+
     // forward request to next middleware
     next();
   });
