@@ -156,7 +156,7 @@ async function handleGoogleLogin(userDetails) {
   // LOGIN PATH: User is already registered
   // --------------------------------------------------
 
-  // If user exists, check for any missing googleID (Mainly SYSTEM_ADMIN's) and update it
+  // If user exists, check for any missing googleID (Mainly ADMIN's) and update it
   if (existingUser) {
     if (!existingUser.googleID) {
       // update googleID in db
