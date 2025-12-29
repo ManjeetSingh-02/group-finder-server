@@ -60,8 +60,8 @@ export const updateUserProfessionalProfiles = asyncHandler(async (req, res) => {
   );
 });
 
-// @controller POST /create-cohort-admin
-export const createCohortAdmin = asyncHandler(async (req, res) => {
+// @controller POST /cohort-admin
+export const createCohortAdminUser = asyncHandler(async (req, res) => {
   // check if user with the given email already exists
   const existingUser = await User.findOne({ email: req.body.userEmail }).select('_id').lean();
   if (existingUser)
@@ -70,9 +70,9 @@ export const createCohortAdmin = asyncHandler(async (req, res) => {
     });
 
   // run the cohort_admin user creation in a transaction session
-  const newCohortAdminUser = await runInTransaction(async mongooseSession => {
+  await runInTransaction(async mongooseSession => {
     // create the cohort_admin user
-    const [createdCohortAdminUser] = await User.create(
+    await User.create(
       [
         {
           email: req.body.userEmail,
@@ -91,20 +91,42 @@ export const createCohortAdmin = asyncHandler(async (req, res) => {
       { $addToSet: { allowedUserEmails: req.body.userEmail } },
       { session: mongooseSession }
     );
-
-    // return the created cohort admin user
-    return createdCohortAdminUser;
   });
 
   // send success status to user
   return res.status(201).json(
     new APISuccessResponse(201, {
       message: 'Cohort Admin user created successfully and added to all cohorts',
-      data: {
-        cohortAdminUserId: newCohortAdminUser._id,
-        email: newCohortAdminUser.email,
-        username: newCohortAdminUser.username,
-      },
+    })
+  );
+});
+
+// @controller DELETE /cohort-admin
+export const deleteCohortAdminUser = asyncHandler(async (req, res) => {
+  // run the cohort_admin user deletion in a transaction session
+  await runInTransaction(async mongooseSession => {
+    // delete the cohort_admin user
+    const deletedUser = await User.deleteOne(
+      { email: req.body.userEmail, role: USER_ROLES.COHORT_ADMIN },
+      { session: mongooseSession }
+    );
+    if (deletedUser.deletedCount === 0)
+      throw new APIErrorResponse(400, {
+        message: 'No Cohort Admin user found with the given email',
+      });
+
+    // update all cohorts to remove userEmail in their allowedUserEmails
+    await Cohort.updateMany(
+      { allowedUserEmails: req.body.userEmail },
+      { $pull: { allowedUserEmails: req.body.userEmail } },
+      { session: mongooseSession }
+    );
+  });
+
+  // send success status to user
+  return res.status(200).json(
+    new APISuccessResponse(200, {
+      message: 'Cohort Admin user deleted successfully and removed from all cohorts',
     })
   );
 });
