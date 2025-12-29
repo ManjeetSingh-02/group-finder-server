@@ -47,7 +47,7 @@ export const isUserAllowedInGroup = asyncHandler(async (req, _, next) => {
   // check if user role is student and not a member of the group
   if (
     req.user.role === USER_ROLES.STUDENT &&
-    (!req.user.currentGroup || !req.user.currentGroup.equals(req.group.id))
+    (!req.user.currentGroup || String(req.user.currentGroup) !== String(req.group.id))
   )
     throw new APIErrorResponse(403, {
       type: 'Group Authorization Error',
@@ -64,7 +64,7 @@ export const isUserGroupAdmin = asyncHandler(async (req, _, next) => {
   const isAdmin = [USER_ROLES.SYSTEM_ADMIN, USER_ROLES.COHORT_ADMIN].includes(req.user.role);
 
   // if user is creator of the group, set admin access to true
-  const isGroupCreator = req.group.createdBy.equals(req.user.id);
+  const isGroupCreator = String(req.group.createdBy) === String(req.user.id);
 
   // if user does not have group admin access, throw an error
   if (!isAdmin && !isGroupCreator)
