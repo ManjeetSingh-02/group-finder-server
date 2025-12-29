@@ -27,10 +27,6 @@ export const createCohortSchema = z.object({
 
 // zod schema for processCSVandAddUsersToCohort
 export const processCSVandAddUsersToCohortSchema = z.object({
-  params: z.object({
-    cohortName: z.string().trim().nonempty({ error: 'cohortName is required' }),
-  }),
-
   files: z.object({
     csvFiles: z
       .array(z.any())
@@ -41,9 +37,6 @@ export const processCSVandAddUsersToCohortSchema = z.object({
 
 // zod schema for addUserToCohort
 export const addUserToCohortSchema = z.object({
-  params: z.object({
-    cohortName: z.string().trim().nonempty({ error: 'cohortName is required' }),
-  }),
   body: z.object({
     userEmail: z.email({ error: 'Valid userEmail is required' }).trim().toLowerCase(),
   }),
@@ -51,9 +44,6 @@ export const addUserToCohortSchema = z.object({
 
 // zod schema for removeUserFromCohort
 export const removeUserFromCohortSchema = z.object({
-  params: z.object({
-    cohortName: z.string().trim().nonempty({ error: 'cohortName is required' }),
-  }),
   body: z.object({
     userEmail: z.email({ error: 'Valid userEmail is required' }).trim().toLowerCase(),
   }),
@@ -61,9 +51,6 @@ export const removeUserFromCohortSchema = z.object({
 
 // zod schema for updateCohortDescription
 export const updateCohortDescriptionSchema = z.object({
-  params: z.object({
-    cohortName: z.string().trim().nonempty({ error: 'cohortName is required' }),
-  }),
   body: z.object({
     cohortDescription: cohortDescriptionSchema,
   }),
