@@ -2,6 +2,7 @@
 import { APIErrorResponse } from '../../api/response.api.js';
 import { asyncHandler } from '../async-handler.js';
 import { User } from '../../models/index.js';
+import { envConfig } from '../env.js';
 
 // import external modules
 import jwt from 'jsonwebtoken';
@@ -57,6 +58,7 @@ function decodeAccessToken(accessToken) {
     throw new APIErrorResponse(401, {
       type: 'JWT Error',
       message: 'Access Token is invalid',
+      issues: error.message,
     });
   }
 }
