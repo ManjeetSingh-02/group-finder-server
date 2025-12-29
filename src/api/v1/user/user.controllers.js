@@ -1,7 +1,7 @@
 // import local modules
 import { asyncHandler } from '../../../utils/async-handler.js';
 import { APIErrorResponse, APISuccessResponse } from '../../response.api.js';
-import { User } from '../../../models/index.js';
+import { Cohort, User } from '../../../models/index.js';
 import { USER_ROLES } from '../../../utils/constants.js';
 
 // @controller GET /profile
@@ -60,43 +60,58 @@ export const updateUserProfessionalProfiles = asyncHandler(async (req, res) => {
   );
 });
 
-// @controller PATCH /update-role
-export const updateUserRole = asyncHandler(async (req, res) => {
-  // check if user is trying to update his own role
-  if (req.user.email === req.body.userEmail)
+// @controller POST /create-cohort-admin
+export const createCohortAdmin = asyncHandler(async (req, res) => {
+  // check if user with the given email already exists
+  const existingUser = await User.findOne({ email: req.body.userEmail }).select('_id').lean();
+  if (existingUser)
     throw new APIErrorResponse(400, {
-      message: 'You cannot update your own role',
+      message: 'Another User with the given email already exists',
     });
 
-  // fetch user from db
-  const existingUser = await User.findOne({ email: req.body.userEmail });
-  if (!existingUser)
-    throw new APIErrorResponse(404, {
-      message: 'User not found',
-    });
+  // run the cohort_admin user creation in a transaction session
+  const newCohortAdminUser = await runInTransaction(async mongooseSession => {
+    // create the cohort_admin user
+    const [createdCohortAdminUser] = await User.create(
+      [
+        {
+          email: req.body.userEmail,
+          username: `${req.body.userEmail.split('@')[0].slice(0, 10)}${generateRandomSuffix()}`,
+          role: USER_ROLES.COHORT_ADMIN,
+        },
+      ],
+      {
+        session: mongooseSession,
+      }
+    );
 
-  // check if newRole is system_admin
-  if (req.body.newRole === USER_ROLES.SYSTEM_ADMIN)
-    throw new APIErrorResponse(403, {
-      message: 'Only one system admin is allowed in the system',
-    });
+    // update all cohorts to include this new user email in their allowedUserEmails
+    await Cohort.updateMany(
+      {},
+      { $addToSet: { allowedUserEmails: req.body.userEmail } },
+      { session: mongooseSession }
+    );
 
-  // check if user has already the role
-  if (existingUser.role === req.body.newRole)
-    throw new APIErrorResponse(400, {
-      message: `User already has the role of ${req.body.newRole}`,
-    });
-
-  // update user role
-  existingUser.role = req.body.newRole;
-
-  // save updated user to db
-  await existingUser.save();
+    // return the created cohort admin user
+    return createdCohortAdminUser;
+  });
 
   // send success status to user
-  return res.status(200).json(
-    new APISuccessResponse(200, {
-      message: 'User role updated successfully',
+  return res.status(201).json(
+    new APISuccessResponse(201, {
+      message: 'Cohort Admin user created successfully and added to all cohorts',
+      data: {
+        cohortAdminUserId: newCohortAdminUser._id,
+        email: newCohortAdminUser.email,
+        username: newCohortAdminUser.username,
+      },
     })
   );
 });
+
+// sub-function to generate a random suffix for username
+function generateRandomSuffix() {
+  return Math.floor(Math.random() * 65536)
+    .toString(16)
+    .padStart(4, '0');
+}
