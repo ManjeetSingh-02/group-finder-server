@@ -2,7 +2,6 @@
 import { asyncHandler } from '../../../utils/async-handler.js';
 import { APIErrorResponse, APISuccessResponse } from '../../response.api.js';
 import { Cohort } from '../../../models/index.js';
-import { CSV_UPLOAD_CONFIG } from '../../../utils/constants.js';
 
 // import external modules
 import { Readable } from 'stream';
@@ -91,7 +90,7 @@ export const processCSVandAddUsersToCohort = asyncHandler(async (req, res) => {
 
   // parse all uploaded CSV files
   const allParsedFileResults = await Promise.all(
-    req.files[CSV_UPLOAD_CONFIG.FIELD_NAME].map(file => parseCSVFile(file.buffer))
+    req.files.map(file => parseCSVFile(file.buffer))
   );
 
   // create a email set to track duplicates
