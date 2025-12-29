@@ -2,38 +2,53 @@
 import { asyncHandler } from '../../../utils/async-handler.js';
 import { APIErrorResponse, APISuccessResponse } from '../../response.api.js';
 import { Group, User } from '../../../models/index.js';
+import { runInTransaction } from '../../../utils/db.js';
 
 // @controller POST /
 export const createGroup = asyncHandler(async (req, res) => {
-  // check if group with same name exists
-  const existingGroup = await Group.findOne({
-    groupName: req.body.groupName,
-    associatedCohort: req.cohort.id,
-  })
-    .select('_id')
-    .lean();
-  if (existingGroup)
-    throw new APIErrorResponse(409, {
-      type: 'Create Group Error',
-      message: 'Group with the same name already exists',
-    });
+  // run the group creation in a transaction session
+  const newGroup = await runInTransaction(async mongooseSession => {
+    // check if group with same name exists
+    const existingGroup = await Group.findOne({
+      groupName: req.body.groupName,
+      associatedCohort: req.cohort.id,
+    })
+      .session(mongooseSession)
+      .select('_id')
+      .lean();
+    if (existingGroup)
+      throw new APIErrorResponse(409, {
+        type: 'Create Group Error',
+        message: 'Group with the same name already exists',
+      });
 
-  // create new group
-  const newGroup = await Group.create({
-    groupName: req.body.groupName,
-    createdBy: req.user.id,
-    associatedCohort: req.cohort.id,
+    // create new group (model.create returns an array when used with session)
+    const [createdGroup] = await Group.create(
+      [
+        {
+          groupName: req.body.groupName,
+          createdBy: req.user.id,
+          associatedCohort: req.cohort.id,
+        },
+      ],
+      { session: mongooseSession }
+    );
+
+    // update user's currentGroup field and save it
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { currentGroup: createdGroup._id },
+      { session: mongooseSession, new: true }
+    );
+    if (!updatedUser)
+      throw new APIErrorResponse(500, {
+        type: 'Create Group Error',
+        message: 'Something went wrong while updating the user currentGroup field',
+      });
+
+    // return the newly created group
+    return createdGroup;
   });
-  if (!newGroup)
-    throw new APIErrorResponse(500, {
-      type: 'Create Group Error',
-      message: 'Something went wrong while creating the group',
-    });
-
-  // update user's currentGroup field and save it
-  const existingUser = await User.findById(req.user.id).select('currentGroup');
-  existingUser.currentGroup = newGroup._id;
-  await existingUser.save({ validateBeforeSave: false });
 
   // send success status to user
   return res.status(201).json(
