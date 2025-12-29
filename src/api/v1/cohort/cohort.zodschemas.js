@@ -1,5 +1,6 @@
 // import external modules
 import { z } from 'zod';
+import { CSV_UPLOAD_CONFIG } from '../../../utils/constants.js';
 
 // zod schema for cohortName
 const cohortNameSchema = z
@@ -27,12 +28,23 @@ export const createCohortSchema = z.object({
 
 // zod schema for processCSVandAddUsersToCohort
 export const processCSVandAddUsersToCohortSchema = z.object({
-  files: z.object({
-    csvFiles: z
-      .array(z.any())
-      .min(1, { error: 'At least 1 CSV file is required' })
-      .max(5, { error: 'At most 5 CSV files are allowed' }),
-  }),
+  files: z
+    .array(
+      z.object({
+        fieldname: z.literal(CSV_UPLOAD_CONFIG.FIELD_NAME),
+        originalname: z.string().trim().nonempty({ error: 'originalname is required' }),
+        encoding: z.string().trim().nonempty({ error: 'encoding is required' }),
+        mimetype: z.literal(CSV_UPLOAD_CONFIG.ALLOWED_MIME_TYPE),
+        buffer: z.instanceof(Buffer),
+        size: z.number().max(CSV_UPLOAD_CONFIG.MAX_FILE_SIZE),
+      })
+    )
+    .min(CSV_UPLOAD_CONFIG.MIN_FILE_COUNT, {
+      error: `At least ${CSV_UPLOAD_CONFIG.MIN_FILE_COUNT} CSV file is required`,
+    })
+    .max(CSV_UPLOAD_CONFIG.MAX_FILE_COUNT, {
+      error: `At most ${CSV_UPLOAD_CONFIG.MAX_FILE_COUNT} CSV files are allowed`,
+    }),
 });
 
 // zod schema for addUserToCohort
