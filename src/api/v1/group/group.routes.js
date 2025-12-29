@@ -34,20 +34,18 @@ router.get('/:groupName', doesGroupExistInCohort, isUserAllowedInGroup, getGroup
 // @route PATCH /:groupName/role-requirements
 router.patch(
   '/:groupName/role-requirements',
-  validateSchema(updateGroupRoleRequirementsSchema),
   doesGroupExistInCohort,
-  isUserAllowedInGroup,
   isUserGroupAdmin,
+  validateSchema(updateGroupRoleRequirementsSchema),
   updateGroupRoleRequirements
 );
 
 // @route PATCH /:groupName/announcements
 router.patch(
   '/:groupName/announcements',
-  validateSchema(updateGroupAnnouncementsSchema),
   doesGroupExistInCohort,
-  isUserAllowedInGroup,
   isUserGroupAdmin,
+  validateSchema(updateGroupAnnouncementsSchema),
   updateGroupAnnouncements
 );
 
