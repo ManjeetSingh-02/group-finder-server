@@ -8,9 +8,6 @@ export const NODE_ENVS = {
   PRODUCTION: 'production',
 };
 
-// allowed node environments
-export const ALLOWED_NODE_ENVS = Object.values(NODE_ENVS);
-
 // google OAuth constants
 export const GOOGLE_OAUTH_CONFIG = {
   AUTH_URI: 'https://accounts.google.com/o/oauth2/v2/auth',

@@ -1,6 +1,5 @@
 // import package modules
 import { z } from 'zod';
-import { ALLOWED_NODE_ENVS } from './constants.js';
 
 // config for environment variables
 export const envConfig = {
@@ -21,7 +20,7 @@ const envSchema = z.object({
   ORIGIN_URL: z.url({ error: 'ORIGIN_URL must be a valid URL' }),
   PORT: z.number().int().positive(),
   MONGODB_URI: z.url({ error: 'MONGO_URI must be a valid MongoDB URI' }),
-  NODE_ENV: z.enum(ALLOWED_NODE_ENVS),
+  NODE_ENV: z.enum(['development', 'testing', 'production']),
   COOKIE_SECRET: z.string().min(32, { error: 'COOKIE_SECRET must be 32 chars' }),
   ACCESS_TOKEN_SECRET: z.string().min(32, { error: 'ACCESS_TOKEN_SECRET must be 32 chars' }),
   REFRESH_TOKEN_SECRET: z.string().min(32, { error: 'REFRESH_TOKEN_SECRET must be 32 chars' }),
