@@ -145,6 +145,51 @@ export const googleLogout = asyncHandler(async (req, res) => {
     .json(new APISuccessResponse(200, { message: 'Logout Successful' }));
 });
 
+// @controller PATCH /token/refresh
+export const refreshTokens = asyncHandler(async (req, res) => {
+  // get old refresh token from cookies
+  const oldRefreshToken = req.signedCookies[REFRESH_TOKEN_COOKIE_CONFIG.NAME];
+  if (!oldRefreshToken)
+    throw new APIErrorResponse(401, {
+      type: 'Token Refresh Error',
+      message: 'No refresh token provided',
+    });
+
+  // decode old refresh token
+  const decodedToken = decodeRefreshToken(oldRefreshToken);
+
+  // check if user exists
+  const existingUser = await User.findById(decodedToken?.id).select('refreshToken');
+  if (!existingUser)
+    throw new APIErrorResponse(404, {
+      type: 'Token Refresh Error',
+      message: 'User associated with this token no longer exists',
+    });
+
+  // compare oldRefreshToken with the one in db
+  if (existingUser.refreshToken !== oldRefreshToken)
+    throw new APIErrorResponse(401, {
+      type: 'Token Refresh Error',
+      message: 'Refresh token is invalid',
+    });
+
+  // generate new tokens
+  const { accessToken, refreshToken } = await generateTokens(existingUser);
+
+  // success status to user
+  // save refreshToken in httpOnly cookie
+  // send accessToken in response
+  return res
+    .status(200)
+    .cookie(REFRESH_TOKEN_COOKIE_CONFIG.NAME, refreshToken, REFRESH_TOKEN_COOKIE_CONFIG.OPTIONS)
+    .json(
+      new APISuccessResponse(200, {
+        message: 'Token Refresh Successful',
+        data: { accessToken },
+      })
+    );
+});
+
 // sub-function to handle login and registration flow for Google OAuth2
 async function handleGoogleLogin(userDetails) {
   // check if user is already registered
@@ -222,4 +267,17 @@ function generateRandomSuffix() {
   return Math.floor(Math.random() * 65536)
     .toString(16)
     .padStart(4, '0');
+}
+
+// sub-function to decode refresh token
+function decodeRefreshToken(refreshToken) {
+  try {
+    return jwt.verify(refreshToken, envConfig.REFRESH_TOKEN_SECRET);
+  } catch (error) {
+    // if error in verification, throw invalid token error
+    throw new APIErrorResponse(401, {
+      type: 'Token Refresh Error',
+      message: 'Invalid refresh token',
+    });
+  }
 }
