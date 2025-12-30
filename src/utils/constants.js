@@ -17,6 +17,12 @@ export const GOOGLE_OAUTH_CONFIG = {
   SCOPE_GRANT_TYPE: 'authorization_code',
 };
 
+// export accessToken expiry duration(5 mins)
+export const ACCESS_TOKEN_LIFETIME = 5 * 60 * 1000;
+
+// export refreshToken expiry duration (24 hrs)
+export const REFRESH_TOKEN_LIFETIME = 24 * 60 * 60 * 1000;
+
 // google OAuth Cookie constants
 export const OAUTH_COOKIE_CONFIG = {
   STATE_NAME: 'oauthState',
@@ -26,15 +32,9 @@ export const OAUTH_COOKIE_CONFIG = {
     secure: envConfig.NODE_ENV === NODE_ENVS.PRODUCTION,
     signed: true,
     sameSite: 'Lax',
-    maxAge: 5 * 60 * 1000,
+    maxAge: ACCESS_TOKEN_LIFETIME,
   },
 };
-
-// export accessToken expiry duration(5 mins)
-export const ACCESS_TOKEN_LIFETIME = 5 * 60 * 1000;
-
-// export refreshToken expiry duration (24 hrs)
-export const REFRESH_TOKEN_LIFETIME = 24 * 60 * 60 * 1000;
 
 // export refreshToken Cookie constants
 export const REFRESH_TOKEN_COOKIE_CONFIG = {
@@ -44,7 +44,7 @@ export const REFRESH_TOKEN_COOKIE_CONFIG = {
     secure: envConfig.NODE_ENV === NODE_ENVS.PRODUCTION,
     signed: true,
     sameSite: envConfig.NODE_ENV === NODE_ENVS.PRODUCTION ? 'None' : 'Lax',
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    maxAge: REFRESH_TOKEN_LIFETIME,
   },
 };
 
