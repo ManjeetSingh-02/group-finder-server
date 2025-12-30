@@ -274,10 +274,17 @@ function decodeRefreshToken(refreshToken) {
   try {
     return jwt.verify(refreshToken, envConfig.REFRESH_TOKEN_SECRET);
   } catch (error) {
-    // if error in verification, throw invalid token error
+    // if token is expired, throw a token expired error
+    if (error.name === 'TokenExpiredError')
+      throw new APIErrorResponse(401, {
+        type: 'Refresh Token Expired Error',
+        message: 'Refresh Token expired, please login again',
+      });
+
+    // for any other error, throw a generic invalid token error
     throw new APIErrorResponse(401, {
-      type: 'Token Refresh Error',
-      message: 'Invalid refresh token',
+      type: 'Refresh Token Error',
+      message: 'Invalid Refresh Token',
     });
   }
 }
