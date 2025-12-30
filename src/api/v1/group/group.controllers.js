@@ -74,7 +74,7 @@ export const getGroupDetails = asyncHandler(async (req, res) => {
     .populate({
       path: 'groupApplications',
       select:
-        '_id applicationStatus applicantDetails.associatedUser applicantDetails.applicantPitch applicantDetails.applicantResources applicantDetails.applicantSkills applicationReviewerDetails createdAt updatedAt -associatedCohort -associatedGroup',
+        '_id applicationStatus applicantDetails applicationReviewerDetails createdAt updatedAt -associatedGroup',
       populate: [
         {
           path: 'applicantDetails.associatedUser',
