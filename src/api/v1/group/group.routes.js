@@ -2,6 +2,8 @@
 import {
   createGroup,
   getGroupDetails,
+  leaveGroup,
+  removeGroupMember,
   updateGroupAnnouncement,
   updateGroupRoleRequirements,
 } from './group.controllers.js';
@@ -15,6 +17,7 @@ import {
 } from '../../../utils/route-protectors/index.js';
 import {
   createGroupSchema,
+  removeGroupMemberSchema,
   updateGroupAnnouncementSchema,
   updateGroupRoleRequirementsSchema,
 } from './group.zodschemas.js';
@@ -54,6 +57,18 @@ router.patch(
   isUserGroupAdmin,
   validateSchema(updateGroupAnnouncementSchema),
   updateGroupAnnouncement
+);
+
+// @route PATCH /:groupName/leave
+router.patch('/:groupName/leave', doesGroupExistInCohort, isUserAllowedInGroup, leaveGroup);
+
+// @route PATCH /:groupName/remove-member
+router.patch(
+  '/:groupName/remove-member',
+  doesGroupExistInCohort,
+  isUserGroupAdmin,
+  validateSchema(removeGroupMemberSchema),
+  removeGroupMember
 );
 
 // @route /:groupName/applications

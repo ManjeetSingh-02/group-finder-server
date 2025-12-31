@@ -59,3 +59,10 @@ export const updateGroupAnnouncementSchema = z.object({
     }),
   }),
 });
+
+// zod schema for removeGroupMember
+export const removeGroupMemberSchema = z.object({
+  body: z.object({
+    memberEmail: z.email({ error: 'Valid memberEmail is required' }).trim().toLowerCase(),
+  }),
+});

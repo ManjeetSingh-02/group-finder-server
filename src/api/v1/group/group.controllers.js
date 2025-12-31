@@ -129,3 +129,103 @@ export const updateGroupAnnouncement = asyncHandler(async (req, res) => {
     })
   );
 });
+
+// @controller PATCH /:groupName/leave
+export const leaveGroup = asyncHandler(async (req, res) => {
+  // check if user is creator of the group
+  if (String(req.group.createdBy) === String(req.user.id))
+    throw new APIErrorResponse(400, {
+      type: 'Leave Group Error',
+      message: 'Group creator cannot leave the group, please delete the group instead',
+    });
+
+  // run the group leave process in a transaction session
+  await runInTransaction(async mongooseSession => {
+    // update user's current group to null
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        _id: req.user.id,
+        currentGroup: req.group.id,
+      },
+      { currentGroup: null },
+      { session: mongooseSession, new: true }
+    );
+    if (!updatedUser)
+      throw new APIErrorResponse(400, {
+        type: 'Leave Group Error',
+        message: 'User is not a member of this group',
+      });
+
+    // update group by decrementing group members count by 1
+    const updatedGroup = await Group.findOneAndUpdate(
+      {
+        _id: req.group.id,
+        groupMembersCount: { $gt: 0 },
+      },
+      { $inc: { groupMembersCount: -1 } },
+      { session: mongooseSession, new: true }
+    );
+    if (!updatedGroup)
+      throw new APIErrorResponse(400, {
+        type: 'Leave Group Error',
+        message: 'Something went wrong while updating the group members count',
+      });
+  });
+
+  // send success response to user
+  return res.status(200).json(
+    new APISuccessResponse(200, {
+      message: 'Left group successfully',
+    })
+  );
+});
+
+// @controller PATCH /:groupName/remove-member
+export const removeGroupMember = asyncHandler(async (req, res) => {
+  // run the remove group member process in a transaction session
+  await runInTransaction(async mongooseSession => {
+    // update user's current group to null
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        email: req.body.memberEmail,
+        currentGroup: req.group.id,
+      },
+      { currentGroup: null },
+      { session: mongooseSession, new: true }
+    );
+    if (!updatedUser)
+      throw new APIErrorResponse(400, {
+        type: 'Remove Member Error',
+        message: 'User is not a member of this group',
+      });
+
+    // check if user is creator of the group
+    if (String(req.group.createdBy) === String(updatedUser._id))
+      throw new APIErrorResponse(400, {
+        type: 'Remove Member Error',
+        message: 'Group creator cannot be removed from the group, please delete the group instead',
+      });
+
+    // update group by decrementing group members count by 1
+    const updatedGroup = await Group.findOneAndUpdate(
+      {
+        _id: req.group.id,
+        groupMembersCount: { $gt: 0 },
+      },
+      { $inc: { groupMembersCount: -1 } },
+      { session: mongooseSession, new: true }
+    );
+    if (!updatedGroup)
+      throw new APIErrorResponse(400, {
+        type: 'Remove Member Error',
+        message: 'Something went wrong while updating the group members count',
+      });
+  });
+
+  // send success response to user
+  return res.status(200).json(
+    new APISuccessResponse(200, {
+      message: 'Removed member from group successfully',
+    })
+  );
+});
