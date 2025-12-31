@@ -17,12 +17,6 @@ import fs from 'fs';
           email: 'manjeetsingh.wrk@gmail.com',
         },
       },
-      servers: [
-        {
-          url: 'http://localhost:3000',
-          description: 'Local development server',
-        },
-      ],
     },
     apis: ['./src/modules/**/*.js'],
   });
