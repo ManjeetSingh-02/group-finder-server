@@ -9,6 +9,7 @@ import {
 import {
   canUserWithdrawApplication,
   doesApplicationExistInGroup,
+  isApplicationNotUnderReview,
   isUserAlreadyInAGroup,
   isUserGroupAdmin,
   userAlreadyHasUnderReviewApplication,
@@ -41,6 +42,7 @@ router.get('/', isUserGroupAdmin, getAllGroupApplications);
 router.patch(
   '/:applicationID/approve',
   doesApplicationExistInGroup,
+  isApplicationNotUnderReview,
   isUserGroupAdmin,
   validateSchema(approveOrDenyApplicationSchema),
   approveApplication
@@ -50,6 +52,7 @@ router.patch(
 router.patch(
   '/:applicationID/deny',
   doesApplicationExistInGroup,
+  isApplicationNotUnderReview,
   isUserGroupAdmin,
   validateSchema(approveOrDenyApplicationSchema),
   denyApplication
@@ -59,6 +62,7 @@ router.patch(
 router.patch(
   '/:applicationID/withdraw',
   doesApplicationExistInGroup,
+  isApplicationNotUnderReview,
   canUserWithdrawApplication,
   withdrawApplication
 );
