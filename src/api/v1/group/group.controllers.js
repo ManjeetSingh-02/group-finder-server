@@ -1,7 +1,7 @@
 // import local modules
 import { asyncHandler } from '../../../utils/async-handler.js';
 import { APIErrorResponse, APISuccessResponse } from '../../response.api.js';
-import { Group, User } from '../../../models/index.js';
+import { Application, Group, User } from '../../../models/index.js';
 import { runInTransaction } from '../../../utils/db.js';
 
 // @controller POST /
@@ -226,6 +226,39 @@ export const removeGroupMember = asyncHandler(async (req, res) => {
   return res.status(200).json(
     new APISuccessResponse(200, {
       message: 'Removed member from group successfully',
+    })
+  );
+});
+
+// @controller DELETE /:groupName
+export const deleteGroup = asyncHandler(async (req, res) => {
+  // run the group deletion in a transaction session
+  await runInTransaction(async mongooseSession => {
+    // update all group member's current group to null
+    await User.updateMany(
+      { currentGroup: req.group.id },
+      { currentGroup: null },
+      { session: mongooseSession }
+    );
+
+    // delete all applications associated with the group
+    await Application.deleteMany({ associatedGroup: req.group.id }, { session: mongooseSession });
+
+    // delete the group
+    const deletedGroup = await Group.findByIdAndDelete(req.group.id, {
+      session: mongooseSession,
+    });
+    if (!deletedGroup)
+      throw new APIErrorResponse(400, {
+        type: 'Delete Group Error',
+        message: 'Something went wrong while deleting the group',
+      });
+  });
+
+  // send success response to user
+  return res.status(200).json(
+    new APISuccessResponse(200, {
+      message: 'Group deleted successfully',
     })
   );
 });

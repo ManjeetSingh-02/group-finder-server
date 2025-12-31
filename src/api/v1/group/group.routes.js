@@ -1,6 +1,7 @@
 // import local modules
 import {
   createGroup,
+  deleteGroup,
   getGroupDetails,
   leaveGroup,
   removeGroupMember,
@@ -70,6 +71,9 @@ router.patch(
   validateSchema(removeGroupMemberSchema),
   removeGroupMember
 );
+
+// @route DELETE /:groupName
+router.delete('/:groupName', doesGroupExistInCohort, isUserGroupAdmin, deleteGroup);
 
 // @route /:groupName/applications
 router.use('/:groupName/applications', doesGroupExistInCohort, applicationRouter);
