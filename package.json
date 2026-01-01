@@ -8,7 +8,7 @@
     "dev": "npm run system_admin:check && nodemon --env-file=.env src/index.js",
     "system_admin:check": "node --env-file=.env src/utils/system-scripts/checkSystemAdmin.js",
     "system_admin:init": "node --env-file=.env src/utils/system-scripts/initializeSystemAdmin.js",
-    "api_docs:generate": "node src/utils/system-scripts/generateAPIDocumentation.js",
+    "api_docs_json:generate": "node src/utils/system-scripts/generateAPIDocumentation.js",
     "format": "prettier --write ."
   },
   "repository": {

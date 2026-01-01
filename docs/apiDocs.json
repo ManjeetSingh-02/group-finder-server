@@ -10,6 +10,12 @@
       "email": "manjeetsingh.wrk@gmail.com"
     }
   },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development Server"
+    }
+  ],
   "paths": {},
   "components": {},
   "tags": []
