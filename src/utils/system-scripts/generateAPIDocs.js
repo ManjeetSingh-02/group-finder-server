@@ -7,12 +7,13 @@ import fs from 'fs/promises';
 import path from 'path';
 
 (async function () {
-  const rootDir = path.resolve(import.meta.dirname, '../../../');
-  const outputFileDir = path.join(rootDir, 'docs', 'apiDocs.json');
+  const srcDir = path.resolve(import.meta.dirname, '../../');
+  const outputDir = path.join(srcDir, 'utils', 'docs');
+  const outputFile = path.join(outputDir, 'apiDocs.json');
 
   // initialize swagger documentation
   const docInstance = expressJSDocSwagger(app)({
-    baseDir: path.join(rootDir, 'src'),
+    baseDir: srcDir,
     filesPattern: 'api/v1/**/*.controllers.js',
     info: {
       contact: {
@@ -26,7 +27,7 @@ import path from 'path';
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: 'http://localhost:3000/api/v1',
         description: 'Development server',
       },
     ],
@@ -35,8 +36,12 @@ import path from 'path';
   // listen for 'finish' event to save the generated docs into a json file
   docInstance.on('finish', async generatedData => {
     try {
+      // ensure the output directory exists
+      await fs.mkdir(outputDir, { recursive: true });
+      console.log('--- Output Directory Creation/Verification: ✅');
+
       // save the generated documentation to a JSON file in the output directory
-      await fs.writeFile(outputFileDir, JSON.stringify(generatedData, null, 2), 'utf8');
+      await fs.writeFile(outputFile, JSON.stringify(generatedData, null, 2), 'utf8');
       console.log('--- API Documentation JSON Stored in Output File: ✅');
     } catch (error) {
       // log error
@@ -47,7 +52,7 @@ import path from 'path';
       console.error('---------------------------------------------------------');
 
       // delete the output file if it was partially created
-      await fs.unlink(outputFileDir).catch(() => {});
+      await fs.unlink(outputFile).catch(() => {});
       console.log('--- Partially Created Output File Deletion: ✅');
 
       // exit with failure
