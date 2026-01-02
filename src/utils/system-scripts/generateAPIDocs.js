@@ -46,6 +46,14 @@ import path from 'path';
   // listen for 'finish' event to save the generated docs into a json file
   docInstance.on('finish', async generatedData => {
     try {
+      // remove any security with empty arrays(security: []) from the generated data
+      for (const path of Object.values(generatedData.paths)) {
+        for (const method of Object.values(path)) {
+          if (Array.isArray(method.security) && method.security.length === 0)
+            delete method.security;
+        }
+      }
+
       // ensure the output directory exists
       await fs.mkdir(outputDir, { recursive: true });
       console.log('--- Output Directory Creation/Verification: ✅');
