@@ -136,8 +136,8 @@
     "/healthcheck": {
       "get": {
         "deprecated": false,
-        "summary": "Health Check Controller",
-        "description": "Controller to check the health status of the server.",
+        "summary": "Check Server Health",
+        "description": "Endpoint to check the status of the server.",
         "security": [],
         "responses": {
           "200": {
@@ -149,7 +149,7 @@
                 },
                 "examples": {
                   "example1": {
-                    "summary": "Successful response example",
+                    "summary": "Successful health check response",
                     "value": {
                       "success": true,
                       "statusCode": 200,
@@ -166,14 +166,15 @@
         "parameters": [],
         "tags": [
           "HealthCheck"
-        ]
+        ],
+        "operationId": "healthCheck"
       }
     }
   },
   "tags": [
     {
       "name": "HealthCheck",
-      "description": "Health Check Routes"
+      "description": "Health Check Endpoints"
     }
   ]
 }
