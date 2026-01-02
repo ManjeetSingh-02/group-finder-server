@@ -14,7 +14,7 @@ import path from 'path';
   // initialize swagger documentation
   const docInstance = expressJSDocSwagger(app)({
     baseDir: srcDir,
-    filesPattern: ['api/response.api.js', 'api/v1/**/*.controllers.js'],
+    filesPattern: ['api/docs.typedefs.js', 'api/v1/**/*.controllers.js'],
     info: {
       contact: {
         name: 'Manjeet Singh',
