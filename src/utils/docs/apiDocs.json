@@ -17,8 +17,58 @@
       "description": "Development server"
     }
   ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "components": {
-    "schemas": {}
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Enter your JWT token in the format: Bearer <token>"
+      }
+    },
+    "schemas": {
+      "APISuccessResponse": {
+        "description": "",
+        "type": "object",
+        "properties": {
+          "success": {
+            "description": "Indicates the request was successful",
+            "type": "boolean"
+          },
+          "statusCode": {
+            "description": "The HTTP status code",
+            "type": "number"
+          },
+          "response": {
+            "description": "Success message (Always present)",
+            "type": "string"
+          }
+        }
+      },
+      "APIErrorResponse": {
+        "description": "",
+        "type": "object",
+        "properties": {
+          "success": {
+            "description": "Indicates the request failed",
+            "type": "boolean"
+          },
+          "statusCode": {
+            "description": "The HTTP status code",
+            "type": "number"
+          },
+          "error": {
+            "description": "Description of the error",
+            "type": "string"
+          }
+        }
+      }
+    }
   },
   "paths": {},
   "tags": []
