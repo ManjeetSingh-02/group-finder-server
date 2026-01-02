@@ -132,6 +132,48 @@
       }
     }
   },
-  "paths": {},
-  "tags": []
+  "paths": {
+    "/healthcheck": {
+      "get": {
+        "deprecated": false,
+        "summary": "Health Check Controller",
+        "description": "Controller to check the health status of the server.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISuccessResponse"
+                },
+                "examples": {
+                  "example1": {
+                    "summary": "Successful response example",
+                    "value": {
+                      "success": true,
+                      "statusCode": 200,
+                      "response": {
+                        "message": "Server is Running"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "tags": [
+          "HealthCheck"
+        ]
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "HealthCheck",
+      "description": "Health Check Routes"
+    }
+  ]
 }
